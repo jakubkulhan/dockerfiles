@@ -35,7 +35,7 @@ COPY . /srv
 
 # `java:8-jdk`
 
-[![](https://badge.imagelayers.io/jakubkulhan/java:8.svg)](https://imagelayers.io/?images=jakubkulhan/java:8 'Get your own badge on imagelayers.io')
+[![](https://badge.imagelayers.io/jakubkulhan/java:8-jdk.svg)](https://imagelayers.io/?images=jakubkulhan/java:8-jdk 'Get your own badge on imagelayers.io')
 
 - Java 8 JDK.
 
@@ -44,3 +44,13 @@ COPY . /srv
 [![](https://badge.imagelayers.io/jakubkulhan/java:8-jre.svg)](https://imagelayers.io/?images=jakubkulhan/java:8-jre 'Get your own badge on imagelayers.io')
 
 - Java 8 JRE.
+
+# `nginx:latest`
+
+[![](https://badge.imagelayers.io/jakubkulhan/nginx:latest.svg)](https://imagelayers.io/?images=jakubkulhan/nginx:latest 'Get your own badge on imagelayers.io')
+
+- Nginx with better default configuration:
+  - Default server will reject unknown host, not default to first defined host.
+  - SSL settings goodies.
+    - Contains pre-generated non-standard elliptic curve for DH key exchange, however, you should generate and use one yourself and mount it to `/etc/nginx/ssl/dhparam2048.pem`.
+- Mount volume with HTTP sites configuration to `/etc/nginx/sites`, Nginx will pick it up.
