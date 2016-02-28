@@ -1,5 +1,7 @@
 FROM debian:jessie
 
+MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
+
 COPY dotdeb.gpg /tmp/dotdeb.gpg
 
 RUN set -ex && \

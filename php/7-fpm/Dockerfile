@@ -1,5 +1,7 @@
 FROM jakubkulhan/php:7
 
+MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
+
 RUN set -ex && \
 	apt-get update && \
 	apt-get install -y php7.0-fpm && \
