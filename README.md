@@ -1,6 +1,6 @@
 # Dockerfiles
 
-## `jakubkulhan/php:7`
+## `php:7`
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7.svg)](https://imagelayers.io/?images=jakubkulhan/php:7 'Get your own badge on imagelayers.io')
 
@@ -18,7 +18,7 @@ RUN set -ex && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ```
 
-## `jakubkulhan/php:7-fpm`
+## `php:7-fpm`
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7-fpm.svg)](https://imagelayers.io/?images=jakubkulhan/php:7-fpm 'Get your own badge on imagelayers.io')
 
@@ -32,3 +32,15 @@ RUN set -ex && \
 FROM jakubkulhan/php:7-fpm
 COPY . /srv
 ```
+
+# `java:8-jdk`
+
+[![](https://badge.imagelayers.io/jakubkulhan/java:8.svg)](https://imagelayers.io/?images=jakubkulhan/java:8 'Get your own badge on imagelayers.io')
+
+- Java 8 JDK.
+
+# `java:8-jre`
+
+[![](https://badge.imagelayers.io/jakubkulhan/java:8-jre.svg)](https://imagelayers.io/?images=jakubkulhan/java:8-jre 'Get your own badge on imagelayers.io')
+
+- Java 8 JRE.
