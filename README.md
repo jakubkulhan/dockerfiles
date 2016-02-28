@@ -2,6 +2,8 @@
 
 ## `jakubkulhan/php:7`
 
+[![](https://badge.imagelayers.io/jakubkulhan/php:7.svg)](https://imagelayers.io/?images=jakubkulhan/php:7 'Get your own badge on imagelayers.io')
+
 - Based on `debian:jessie` image.
 - Installs `php7.0-cli`, `php7.0-mysql` & `php7.0-imagick` packages.
 - Additional PHP extensions can be installed basing on this image:
@@ -17,6 +19,8 @@ RUN set -ex && \
 ```
 
 ## `jakubkulhan/php:7-fpm`
+
+[![](https://badge.imagelayers.io/jakubkulhan/php:7-fpm.svg)](https://imagelayers.io/?images=jakubkulhan/php:7-fpm 'Get your own badge on imagelayers.io')
 
 - Based on `jakubkulhan/php:7` (therefor `debian:jessie`) image.
 - Additionally installs `php7.0-fpm` and provides basic configuration:
