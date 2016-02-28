@@ -33,19 +33,19 @@ FROM jakubkulhan/php:7-fpm
 COPY . /srv
 ```
 
-# `java:8-jdk`
+## `java:8-jdk`
 
 [![](https://badge.imagelayers.io/jakubkulhan/java:8-jdk.svg)](https://imagelayers.io/?images=jakubkulhan/java:8-jdk 'Get your own badge on imagelayers.io')
 
 - Java 8 JDK.
 
-# `java:8-jre`
+## `java:8-jre`
 
 [![](https://badge.imagelayers.io/jakubkulhan/java:8-jre.svg)](https://imagelayers.io/?images=jakubkulhan/java:8-jre 'Get your own badge on imagelayers.io')
 
 - Java 8 JRE.
 
-# `nginx:latest`
+## `nginx:latest`
 
 [![](https://badge.imagelayers.io/jakubkulhan/nginx:latest.svg)](https://imagelayers.io/?images=jakubkulhan/nginx:latest 'Get your own badge on imagelayers.io')
 
