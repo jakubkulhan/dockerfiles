@@ -5,7 +5,7 @@
 [![](https://badge.imagelayers.io/jakubkulhan/php:7.svg)](https://imagelayers.io/?images=jakubkulhan/php:7 'Get your own badge on imagelayers.io')
 
 - Based on `debian:jessie` image.
-- Installs `php7.0-cli`, `php7.0-mysql` & `php7.0-imagick` packages.
+- Installs `php7.0-cli` package.
 - Additional PHP extensions can be installed basing on this image:
 
 ```
