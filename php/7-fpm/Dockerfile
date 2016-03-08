@@ -51,4 +51,4 @@ RUN set -ex && \
 
 EXPOSE 9000
 
-ENTRYPOINT ["/usr/sbin/php-fpm", "-F"]
+CMD ["/usr/sbin/php-fpm", "-F"]
