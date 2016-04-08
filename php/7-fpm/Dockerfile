@@ -1,10 +1,14 @@
-FROM jakubkulhan/php:7
+FROM debian:jessie
 
 MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
 
+COPY dotdeb.gpg /tmp/dotdeb.gpg
+
 RUN set -ex && \
+	echo 'deb http://packages.dotdeb.org jessie all' >> /etc/apt/sources.list.d/dotdeb.list && \
+	apt-key add /tmp/dotdeb.gpg && \
 	apt-get update && \
-	apt-get install -y php7.0-fpm && \
+	apt-get install -y php7.0-cli php7.0-fpm && \
 	update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm7.0 0 && \
 	cp /etc/php/7.0/fpm/php-fpm.conf /etc/php/7.0/fpm/php-fpm.conf.dist && \
 	{ \
@@ -36,7 +40,7 @@ RUN set -ex && \
 		echo 'php_admin_value[error_log] = /proc/self/fd/2'; \
 		echo 'php_admin_flag[log_errors] = on'; \
 		echo 'php_admin_value[memory_limit] = 64M'; \
-		echo 'php_admin_value[open_basedir] = /srv'; \
+		echo 'php_admin_value[open_basedir] = /srv:/tmp'; \
 		echo 'php_admin_value[error_reporting] = 32767'; \
 	} | tee /etc/php/7.0/fpm/pool.d/www.conf && \
 	mkdir /srv/www && \
