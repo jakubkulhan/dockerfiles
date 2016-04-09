@@ -30,7 +30,7 @@ RUN set -ex && \
 		echo 'extension = v8js.so'; \
 	} | tee /etc/php/mods-available/v8js.ini && \
 	ln -s /etc/php/mods-available/v8js.ini /etc/php/7.0/cli/conf.d/99-v8js.ini && \
-	rm -rf /usr/local/depot_tools /usr/src/* && \
+	rm -rf /usr/local/depot_tools /usr/local/src/* && \
 	apt-get remove -y git subversion make g++ python curl php7.0-dev chrpath && \
 	apt-get autoremove -y && \
 	apt-get clean && \

@@ -1,6 +1,6 @@
 # Dockerfiles
 
-## `php:7`
+## `php:7` / `php:7-v8js`
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7.svg)](https://imagelayers.io/?images=jakubkulhan/php:7 'Get your own badge on imagelayers.io')
 
@@ -18,7 +18,9 @@ RUN set -ex && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 ```
 
-## `php:7-fpm`
+- `php:7-v8js` comes with compiled [`v8js`](https://github.com/phpv8/v8js) extension.
+
+## `php:7-fpm` / `php:7-fpm-v8js`
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7-fpm.svg)](https://imagelayers.io/?images=jakubkulhan/php:7-fpm 'Get your own badge on imagelayers.io')
 
@@ -32,6 +34,8 @@ RUN set -ex && \
 FROM jakubkulhan/php:7-fpm
 COPY . /srv
 ```
+
+- `php:7-fpm-v8js` comes with compiled [`v8js`](https://github.com/phpv8/v8js) extension.
 
 ## `java:8-jdk`
 
