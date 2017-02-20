@@ -59,14 +59,9 @@ RUN set -ex && \
 	cd /usr/local/src/v8 && make native library=shared snapshot=off -j4 && \
 	mkdir -p /usr/local/lib && \
 	cp /usr/local/src/v8/out/native/lib.target/lib*.so /usr/local/lib && \
-	{ \
-		echo 'create /usr/local/lib/libv8_libplatform.a'; \
-		echo 'addlib /usr/local/src/v8/out/native/obj.target/tools/gyp/libv8_libplatform.a'; \
-		echo 'save'; \
-		echo 'end'; \
-	} | ar -M && \
 	cp -R /usr/local/src/v8/include /usr/local && \
 	chrpath -r '$ORIGIN' /usr/local/lib/libv8.so && \
+	chrpath -r '$ORIGIN' /usr/local/lib/libv8_libplatform.so && \
 	git clone https://github.com/phpv8/v8js.git /usr/local/src/v8js && \
 	cd /usr/local/src/v8js && git checkout php7 && phpize7.1 && ./configure --with-v8js=/usr/local && make all test install && \
 	{ \
