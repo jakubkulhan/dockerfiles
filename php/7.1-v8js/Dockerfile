@@ -15,7 +15,7 @@ RUN set -ex && \
 	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/local/depot_tools && \
 	export PATH="$PATH:/usr/local/depot_tools" && \
 	cd /usr/local/src && fetch v8 && \
-	cd /usr/local/src/v8 && make native library=shared snapshot=off -j4 && \
+	cd /usr/local/src/v8 && make native library=shared snapshot=off -j8 && \
 	mkdir -p /usr/local/lib && \
 	cp /usr/local/src/v8/out/native/lib.target/lib*.so /usr/local/lib && \
 	cp -R /usr/local/src/v8/include /usr/local && \
