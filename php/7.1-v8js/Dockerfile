@@ -21,8 +21,9 @@ RUN set -ex && \
 	gclient sync && \
 	tools/dev/v8gen.py -vv x64.release -- is_component_build=true && \
 	ninja -C out.gn/x64.release/ && \
-	mkdir -p /opt/v8/{lib,include} && \
+	mkdir -p /opt/v8/lib && \
 	cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin /opt/v8/lib/ && \
+	mkdir -p /opt/v8/include && \
 	cp -R include/* /opt/v8/include/ && \
 	git clone https://github.com/phpv8/v8js.git /usr/local/src/v8js && \
 	cd /usr/local/src/v8js && \
