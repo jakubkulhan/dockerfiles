@@ -19,7 +19,7 @@ RUN set -ex && \
 	cd /usr/local/src/v8 && \
 	git checkout 5.8.301 && \
 	gclient sync && \
-	tools/dev/v8gen.py -vv x64.release -- is_component_build=true && \
+	tools/dev/v8gen.py -vv x64.release -- is_component_build=true v8_enable_i18n_support=false && \
 	ninja -C out.gn/x64.release/ && \
 	mkdir -p /opt/v8/lib && \
 	cp out.gn/x64.release/lib*.so out.gn/x64.release/*_blob.bin /opt/v8/lib/ && \
