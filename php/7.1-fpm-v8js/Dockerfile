@@ -58,7 +58,7 @@ RUN set -ex && \
 	cd /usr/local/src && \
 	fetch v8 && \
 	cd /usr/local/src/v8 && \
-	git checkout 5.8.301 && \
+	git checkout 5.9.40 && \
 	gclient sync && \
 	tools/dev/v8gen.py -vv x64.release -- is_component_build=true v8_enable_i18n_support=false && \
 	ninja -C out.gn/x64.release/ && \
