@@ -4,7 +4,7 @@
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7.svg)](https://imagelayers.io/?images=jakubkulhan/php:7 'Get your own badge on imagelayers.io')
 
-- Based on `debian:jessie` image.
+- Based on `debian:stretch` image.
 - Installs `php7.0-cli` package.
 - Additional PHP extensions can be installed basing on this image:
 
@@ -24,7 +24,7 @@ RUN set -ex && \
 
 [![](https://badge.imagelayers.io/jakubkulhan/php:7-fpm.svg)](https://imagelayers.io/?images=jakubkulhan/php:7-fpm 'Get your own badge on imagelayers.io')
 
-- Based on `jakubkulhan/php:7` (therefor `debian:jessie`) image.
+- Based on `jakubkulhan/php:7` (therefor `debian:stretch`) image.
 - Additionally installs `php7.0-fpm` and provides basic configuration:
   - Logs from FPM and worker processes are redirected to stderr.
   - Pool `www` with dynamic process management configuration (min 4, max 64 workers), `memory_limit = 64M` and `open_basedir = /srv`.
