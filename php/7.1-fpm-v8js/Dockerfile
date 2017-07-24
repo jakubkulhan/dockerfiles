@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 
 MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
 
@@ -6,11 +6,11 @@ COPY sury.gpg /tmp/sury.gpg
 
 RUN set -ex && \
 	apt-get update && \
-	apt-get install -y apt-transport-https lsb-release ca-certificates && \
+	apt-get install -y --no-install-suggests --no-install-recommends apt-transport-https lsb-release gnupg ca-certificates && \
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/sury.list && \
 	apt-key add /tmp/sury.gpg && \
 	apt-get update && \
-	apt-get install -y php7.1-cli php7.1-fpm && \
+	apt-get install -y --no-install-suggests --no-install-recommends php7.1-cli php7.1-fpm && \
 	update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm7.1 0 && \
 	cp /etc/php/7.1/fpm/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf.dist && \
 	{ \
@@ -52,7 +52,7 @@ RUN set -ex && \
 		echo 'echo "It workses!";'; \
 	} | tee /srv/www/index.php && \
 	chown www-data:www-data /srv/www/index.php && \
-	apt-get install -y git subversion make g++ python curl php7.1-dev glib2.0-dev && \
+	apt-get install -y --no-install-suggests --no-install-recommends git subversion make g++ python curl php7.1-dev glib2.0-dev && \
 	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/local/depot_tools && \
 	export PATH="$PATH:/usr/local/depot_tools" && \
 	cd /usr/local/src && \
