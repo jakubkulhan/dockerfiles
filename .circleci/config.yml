@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  build_php_7_1:
+    docker:
+    - image: docker:stable
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        command: |
+          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+          if docker pull jakubkulhan/php:7.1 &> /dev/null; then
+            export CURRENT_VERSION=$(docker run -it --rm jakubkulhan/php:7.1 -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')
+          else
+            export CURRENT_VERSION=none
+          fi
+          docker build -t jakubkulhan/php:build php/7.1
+          export NEW_VERSION=$(docker run -it --rm jakubkulhan/php:build -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')
+          echo "current: $CURRENT_VERSION"
+          echo "new:     $NEW_VERSION"
+workflows:
+  version: 2
+  docker:
+    jobs:
+    - build_php_7_1
