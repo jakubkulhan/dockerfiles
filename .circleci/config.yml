@@ -10,11 +10,13 @@ jobs:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           export PHP_BUILD=7.1
-          if docker pull jakubkulhan/php:$PHP_BUILD &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:$PHP_BUILD -r 'echo PHP_VERSION;')
+          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
+            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
           else
             export CURRENT_VERSION=none
           fi
+          echo "current: $CURRENT_VERSION"
+          exit 0
           docker build --pull --no-cache -t jakubkulhan/php:build php/$PHP_BUILD
           export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
           # Only push if not already built
@@ -45,11 +47,13 @@ jobs:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           export PHP_BUILD=7.1-fpm
-          if docker pull jakubkulhan/php:$PHP_BUILD &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:$PHP_BUILD -r 'echo PHP_VERSION;')
+          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
+            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
           else
             export CURRENT_VERSION=none
           fi
+          echo "current: $CURRENT_VERSION"
+          exit 0
           docker build --pull --no-cache -t jakubkulhan/php:build php/$PHP_BUILD
           export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
           # Only push if not already built
