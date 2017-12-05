@@ -29,6 +29,10 @@ jobs:
             export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
             docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
             docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
+            # major
+            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d", PHP_MAJOR_VERSION);')"
+            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
+            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
           fi
 
   build_php_7_1_fpm:
@@ -60,11 +64,26 @@ jobs:
             export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
             docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
             docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
+            # major
+            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d-fpm", PHP_MAJOR_VERSION);')"
+            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
+            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
           fi
 
 workflows:
   version: 2
-  docker:
+  build:
+    jobs:
+    - build_php_7_1
+    - build_php_7_1_fpm
+  nightly:
+    triggers:
+    - schedule:
+        cron: "0 2 * * *"
+        filters:
+          branches:
+            only:
+            - master
     jobs:
     - build_php_7_1
     - build_php_7_1_fpm
