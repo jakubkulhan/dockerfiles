@@ -8,5 +8,5 @@ gpg:
 	rm php/sury.gpg
 	# Node key
 	wget -q https://deb.nodesource.com/gpgkey/nodesource.gpg.key -O node/node.gpg
-	for version in 9; do cp node/node.gpg node/$$version/node.gpg; done
+	for version in 9 10 11; do cp node/node.gpg node/$$version/node.gpg; done
 	rm node/node.gpg

@@ -245,6 +245,76 @@ jobs:
             docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
           fi
 
+  build_node_10:
+    docker:
+    - image: docker:stable
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        command: |
+          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+          export NODE_BUILD=10
+          if docker pull "jakubkulhan/node:$NODE_BUILD" &> /dev/null; then
+            export CURRENT_VERSION=$(docker run --rm --entrypoint=node "jakubkulhan/node:$NODE_BUILD" --version)
+          else
+            export CURRENT_VERSION=none
+          fi
+          docker build --pull --no-cache -t jakubkulhan/node:build node/$NODE_BUILD
+          export NEW_VERSION=$(docker run --rm --entrypoint=node jakubkulhan/node:build --version)
+          # Only push if not already built
+          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
+            echo "Already built: $NEW_VERSION"
+          else
+            # release
+            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 3).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_RELEASE_VERSION"
+            docker push "jakubkulhan/node:$NEW_RELEASE_VERSION"
+            # minor
+            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 2).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MINOR_VERSION"
+            docker push "jakubkulhan/node:$NEW_MINOR_VERSION"
+            # major
+            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 1).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
+            docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
+          fi
+
+  build_node_11:
+    docker:
+    - image: docker:stable
+    steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        command: |
+          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+          export NODE_BUILD=11
+          if docker pull "jakubkulhan/node:$NODE_BUILD" &> /dev/null; then
+            export CURRENT_VERSION=$(docker run --rm --entrypoint=node "jakubkulhan/node:$NODE_BUILD" --version)
+          else
+            export CURRENT_VERSION=none
+          fi
+          docker build --pull --no-cache -t jakubkulhan/node:build node/$NODE_BUILD
+          export NEW_VERSION=$(docker run --rm --entrypoint=node jakubkulhan/node:build --version)
+          # Only push if not already built
+          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
+            echo "Already built: $NEW_VERSION"
+          else
+            # release
+            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 3).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_RELEASE_VERSION"
+            docker push "jakubkulhan/node:$NEW_RELEASE_VERSION"
+            # minor
+            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 2).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MINOR_VERSION"
+            docker push "jakubkulhan/node:$NEW_MINOR_VERSION"
+            # major
+            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 1).join(".")')"
+            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
+            docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
+          fi
+
 workflows:
   version: 2
   build:
@@ -256,6 +326,8 @@ workflows:
     - build_php_7_3
     - build_php_7_3_fpm
     - build_node_9
+    - build_node_10
+    - build_node_11
   nightly:
     triggers:
     - schedule:
@@ -272,3 +344,5 @@ workflows:
     - build_php_7_3
     - build_php_7_3_fpm
     - build_node_9
+    - build_node_10
+    - build_node_11
