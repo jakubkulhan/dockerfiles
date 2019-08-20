@@ -1,3 +1,3 @@
 # Dockerfiles
 
-Custom Dockerfiles based on Debian Stretch/Jessie.
+Custom Dockerfiles based on Debian Stretch.
