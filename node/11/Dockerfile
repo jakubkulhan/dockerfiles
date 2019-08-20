@@ -1,7 +1,5 @@
 FROM debian:stretch
 
-MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
-
 COPY node.gpg /tmp/node.gpg
 
 RUN set -ex && \

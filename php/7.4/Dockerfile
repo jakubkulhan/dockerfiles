@@ -1,15 +1,15 @@
 FROM debian:stretch
 
-COPY node.gpg /tmp/node.gpg
+COPY sury.gpg /tmp/sury.gpg
 
 RUN set -ex && \
 	apt-get update && \
 	apt-get install -y --no-install-suggests --no-install-recommends apt-transport-https lsb-release gnupg dirmngr ca-certificates && \
-	echo "deb https://deb.nodesource.com/node_10.x $(lsb_release -c -s) main" > /etc/apt/sources.list.d/nodesource.list && \
-	apt-key add /tmp/node.gpg && \
+	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/sury.list && \
+	apt-key add /tmp/sury.gpg && \
 	apt-get update && \
-	apt-get install -y --no-install-suggests --no-install-recommends nodejs && \
+	apt-get install -y --no-install-suggests --no-install-recommends php7.4-cli && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENTRYPOINT ["node"]
+ENTRYPOINT ["php"]

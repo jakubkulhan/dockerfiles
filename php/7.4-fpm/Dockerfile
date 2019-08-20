@@ -8,16 +8,16 @@ RUN set -ex && \
 	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" >> /etc/apt/sources.list.d/sury.list && \
 	apt-key add /tmp/sury.gpg && \
 	apt-get update && \
-	apt-get install -y --no-install-suggests --no-install-recommends php7.1-cli php7.1-fpm && \
-	update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm7.1 0 && \
-	cp /etc/php/7.1/fpm/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf.dist && \
+	apt-get install -y --no-install-suggests --no-install-recommends php7.4-cli php7.4-fpm && \
+	update-alternatives --install /usr/sbin/php-fpm php-fpm /usr/sbin/php-fpm7.4 0 && \
+	cp /etc/php/7.4/fpm/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf.dist && \
 	{ \
 		echo '[global]'; \
 		echo 'error_log = /proc/self/fd/2'; \
 		echo 'daemonize = no'; \
-		echo 'include = /etc/php/7.1/fpm/pool.d/*.conf'; \
-	} | tee /etc/php/7.1/fpm/php-fpm.conf && \
-	cp /etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf.dist && \
+		echo 'include = /etc/php/7.4/fpm/pool.d/*.conf'; \
+	} | tee /etc/php/7.4/fpm/php-fpm.conf && \
+	cp /etc/php/7.4/fpm/pool.d/www.conf /etc/php/7.4/fpm/pool.d/www.conf.dist && \
 	{ \
 		echo '[www]'; \
 		echo 'user = www-data'; \
@@ -42,7 +42,7 @@ RUN set -ex && \
 		echo 'php_admin_value[memory_limit] = 64M'; \
 		echo 'php_admin_value[open_basedir] = /srv:/tmp'; \
 		echo 'php_admin_value[error_reporting] = 32767'; \
-	} | tee /etc/php/7.1/fpm/pool.d/www.conf && \
+	} | tee /etc/php/7.4/fpm/pool.d/www.conf && \
 	mkdir /srv/www && \
 	{ \
 		echo '<?php'; \

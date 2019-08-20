@@ -1,7 +1,5 @@
 FROM debian:stretch
 
-MAINTAINER Jakub Kulhan <jakub.kulhan@gmail.com>
-
 COPY sury.gpg /tmp/sury.gpg
 
 RUN set -ex && \
