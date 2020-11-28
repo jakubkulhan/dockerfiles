@@ -1,6 +1,6 @@
 FROM debian:stretch
 
-COPY sury.gpg /tmp/sury.gpg
+COPY . /tmp/
 
 RUN set -ex && \
 	apt-get update && \

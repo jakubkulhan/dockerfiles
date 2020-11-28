@@ -1,3 +1,3 @@
 # Dockerfiles
 
-Custom Dockerfiles based on Debian Stretch.
+Custom Dockerfiles based on Debian Stretch/Buster.
