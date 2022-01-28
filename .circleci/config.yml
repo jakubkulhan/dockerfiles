@@ -289,6 +289,8 @@ workflows:
     - build_php_7_4_fpm
     - build_php_8_0
     - build_php_8_0_fpm
+    - build_php_8_1
+    - build_php_8_1_fpm
     - build_node_12
     - build_node_14
   nightly:
@@ -304,5 +306,7 @@ workflows:
     - build_php_7_4_fpm
     - build_php_8_0
     - build_php_8_0_fpm
+    - build_php_8_1
+    - build_php_8_1_fpm
     - build_node_12
     - build_node_14
