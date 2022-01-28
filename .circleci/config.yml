@@ -146,11 +146,13 @@ jobs:
     - image: docker:stable
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           export PHP_BUILD=8.1
+          export DOCKER_BUILDKIT=1
           if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
             export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
           else
@@ -181,11 +183,13 @@ jobs:
     - image: docker:stable
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           export PHP_BUILD=8.1-fpm
+          export DOCKER_BUILDKIT=1
           if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
             export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
           else
