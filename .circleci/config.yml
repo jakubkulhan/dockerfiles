@@ -1,15 +1,19 @@
-version: 2
+version: 2.1
 
 workflows:
   version: 2
   build:
     jobs:
-    - build_php_7_4
-    - build_php_7_4_fpm
-    - build_php_8_0
-    - build_php_8_0_fpm
-    - build_php_8_1
-    - build_php_8_1_fpm
+    - build_php:
+        matrix:
+          parameters:
+            version:
+            - "7.4"
+            - "8.0"
+            - "8.1"
+            tag_suffix:
+            - ""
+            - "-fpm"
     - build_node_12
     - build_node_14
   nightly:
@@ -21,237 +25,61 @@ workflows:
             only:
             - master
     jobs:
-    - build_php_7_4
-    - build_php_7_4_fpm
-    - build_php_8_0
-    - build_php_8_0_fpm
-    - build_php_8_1
-    - build_php_8_1_fpm
+    - build_php:
+        matrix:
+          parameters:
+            version:
+            - "7.4"
+            - "8.0"
+            - "8.1"
+            tag_suffix:
+            - ""
+            - "-fpm"
     - build_node_12
     - build_node_14
 
 jobs:
 
-  build_php_7_4:
+  build_php:
+    parameters:
+      version:
+        type: string
+      tag_suffix:
+        type: string
     docker:
-    - image: docker:latest
+    - image: cimg/base:stable
     steps:
     - checkout
     - setup_remote_docker:
         version: 20.10.11
+    - install_docker_buildx
+    - docker_login
     - run:
+        name: Build PHP Docker image
         command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=7.4
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
-          export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
-          fi
-
-  build_php_7_4_fpm:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=7.4-fpm
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
-          export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d-fpm", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
-          fi
-
-  build_php_8_0:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=8.0
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
-          export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
-          fi
-
-  build_php_8_0_fpm:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=8.0-fpm
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
-          export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d-fpm", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
-          fi
-
-  build_php_8_1:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          mkdir -p ~/.docker/cli-plugins
-          wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64
-          chmod +x ~/.docker/cli-plugins/docker-buildx
-          docker buildx version
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=8.1
+          set -exo pipefail
+          export VERSION=<< parameters.version >>
+          export TAG_SUFFIX=<< parameters.tag_suffix >>
           export DOCKER_BUILDKIT=1
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
+          if docker pull "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" &> /dev/null; then
+            export CURRENT_VERSION=x$(docker run --rm --entrypoint=php "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" -r 'echo PHP_VERSION;')
           else
             export CURRENT_VERSION=none
           fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
+          docker build --progress plain --tag jakubkulhan/php:build -f php/${VERSION}${TAG_SUFFIX}/Dockerfile php
           export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
           # Only push if not already built
           if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
             echo "Already built: $NEW_VERSION"
           else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
-          fi
-
-  build_php_8_1_fpm:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export PHP_BUILD=8.1-fpm
-          export DOCKER_BUILDKIT=1
-          if docker pull "jakubkulhan/php:$PHP_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:$PHP_BUILD" -r 'echo PHP_VERSION;')
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/php:build -f php/$PHP_BUILD/Dockerfile php
-          export NEW_VERSION=$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'echo PHP_VERSION;')
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/php:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d-fpm", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d-fpm", PHP_MAJOR_VERSION);')"
-            docker tag jakubkulhan/php:build "jakubkulhan/php:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/php:$NEW_MAJOR_VERSION"
+            docker buildx build \
+              --progress plain \
+              --tag jakubkulhan/php:$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION);')$TAG_SUFFIX \
+              --tag jakubkulhan/php:$(docker run --rm --entrypoint=php jakubkulhan/php:build -r 'printf("%d.%d", PHP_MAJOR_VERSION, PHP_MINOR_VERSION);')$TAG_SUFFIX \
+              --platform linux/amd64,linux/arm64/v8 \
+              --push \
+              -f php/${VERSION}${TAG_SUFFIX}/Dockerfile \
+              php
           fi
 
   build_node_12:
@@ -325,3 +153,25 @@ jobs:
             docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
             docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
           fi
+
+commands:
+  install_docker_buildx:
+    steps:
+    - run:
+        name: Install Docker Buildx
+        command: |
+          mkdir -p ~/.docker/cli-plugins/
+          wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64
+          chmod a+x ~/.docker/cli-plugins/docker-buildx
+          docker buildx version
+          sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker run --privileged --rm tonistiigi/binfmt --install arm64
+          docker context create buildcontext
+          docker buildx create buildcontext --use
+  docker_login:
+    steps:
+    - run:
+        name: Log in to Docker Hub
+        command: |
+          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
