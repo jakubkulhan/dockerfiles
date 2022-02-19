@@ -1,4 +1,35 @@
 version: 2
+
+workflows:
+  version: 2
+  build:
+    jobs:
+    - build_php_7_4
+    - build_php_7_4_fpm
+    - build_php_8_0
+    - build_php_8_0_fpm
+    - build_php_8_1
+    - build_php_8_1_fpm
+    - build_node_12
+    - build_node_14
+  nightly:
+    triggers:
+    - schedule:
+        cron: "0 2 * * *"
+        filters:
+          branches:
+            only:
+            - master
+    jobs:
+    - build_php_7_4
+    - build_php_7_4_fpm
+    - build_php_8_0
+    - build_php_8_0_fpm
+    - build_php_8_1
+    - build_php_8_1_fpm
+    - build_node_12
+    - build_node_14
+
 jobs:
 
   build_php_7_4:
@@ -284,33 +315,3 @@ jobs:
             docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
             docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
           fi
-
-workflows:
-  version: 2
-  build:
-    jobs:
-    - build_php_7_4
-    - build_php_7_4_fpm
-    - build_php_8_0
-    - build_php_8_0_fpm
-    - build_php_8_1
-    - build_php_8_1_fpm
-    - build_node_12
-    - build_node_14
-  nightly:
-    triggers:
-    - schedule:
-        cron: "0 2 * * *"
-        filters:
-          branches:
-            only:
-            - master
-    jobs:
-    - build_php_7_4
-    - build_php_7_4_fpm
-    - build_php_8_0
-    - build_php_8_0_fpm
-    - build_php_8_1
-    - build_php_8_1_fpm
-    - build_node_12
-    - build_node_14
