@@ -34,10 +34,11 @@ jobs:
 
   build_php_7_4:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -69,10 +70,11 @@ jobs:
 
   build_php_7_4_fpm:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -104,10 +106,11 @@ jobs:
 
   build_php_8_0:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -139,10 +142,11 @@ jobs:
 
   build_php_8_0_fpm:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -174,13 +178,17 @@ jobs:
 
   build_php_8_1:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
     - setup_remote_docker:
         version: 20.10.11
     - run:
         command: |
+          mkdir -p ~/.docker/cli-plugins
+          wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64
+          chmod +x ~/.docker/cli-plugins/docker-buildx
+          docker buildx version
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
           export PHP_BUILD=8.1
           export DOCKER_BUILDKIT=1
@@ -211,7 +219,7 @@ jobs:
 
   build_php_8_1_fpm:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
     - setup_remote_docker:
@@ -248,10 +256,11 @@ jobs:
 
   build_node_12:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
@@ -283,10 +292,11 @@ jobs:
 
   build_node_14:
     docker:
-    - image: docker:stable
+    - image: docker:latest
     steps:
     - checkout
-    - setup_remote_docker
+    - setup_remote_docker:
+        version: 20.10.11
     - run:
         command: |
           docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
