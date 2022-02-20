@@ -14,8 +14,6 @@ workflows:
             tag_suffix:
             - ""
             - "-fpm"
-    - build_node_12
-    - build_node_14
   nightly:
     triggers:
     - schedule:
@@ -35,8 +33,6 @@ workflows:
             tag_suffix:
             - ""
             - "-fpm"
-    - build_node_12
-    - build_node_14
 
 jobs:
 
@@ -62,7 +58,7 @@ jobs:
           export TAG_SUFFIX=<< parameters.tag_suffix >>
           export DOCKER_BUILDKIT=1
           if docker pull "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" &> /dev/null; then
-            export CURRENT_VERSION=x$(docker run --rm --entrypoint=php "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" -r 'echo PHP_VERSION;')
+            export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" -r 'echo PHP_VERSION;')
           else
             export CURRENT_VERSION=none
           fi
@@ -80,78 +76,6 @@ jobs:
               --push \
               -f php/${VERSION}${TAG_SUFFIX}/Dockerfile \
               php
-          fi
-
-  build_node_12:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export NODE_BUILD=12
-          if docker pull "jakubkulhan/node:$NODE_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=node "jakubkulhan/node:$NODE_BUILD" --version)
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/node:build -f node/$NODE_BUILD/Dockerfile node
-          export NEW_VERSION=$(docker run --rm --entrypoint=node jakubkulhan/node:build --version)
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 3).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/node:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 2).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/node:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 1).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
-          fi
-
-  build_node_14:
-    docker:
-    - image: docker:latest
-    steps:
-    - checkout
-    - setup_remote_docker:
-        version: 20.10.11
-    - run:
-        command: |
-          docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-          export NODE_BUILD=14
-          if docker pull "jakubkulhan/node:$NODE_BUILD" &> /dev/null; then
-            export CURRENT_VERSION=$(docker run --rm --entrypoint=node "jakubkulhan/node:$NODE_BUILD" --version)
-          else
-            export CURRENT_VERSION=none
-          fi
-          docker build --pull --no-cache -t jakubkulhan/node:build -f node/$NODE_BUILD/Dockerfile node
-          export NEW_VERSION=$(docker run --rm --entrypoint=node jakubkulhan/node:build --version)
-          # Only push if not already built
-          if [ "$NEW_VERSION" == "$CURRENT_VERSION" ]; then
-            echo "Already built: $NEW_VERSION"
-          else
-            # release
-            export NEW_RELEASE_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 3).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_RELEASE_VERSION"
-            docker push "jakubkulhan/node:$NEW_RELEASE_VERSION"
-            # minor
-            export NEW_MINOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 2).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MINOR_VERSION"
-            docker push "jakubkulhan/node:$NEW_MINOR_VERSION"
-            # major
-            export NEW_MAJOR_VERSION="$(docker run --rm --entrypoint=node jakubkulhan/node:build -p 'process.versions.node.split(".").slice(0, 1).join(".")')"
-            docker tag jakubkulhan/node:build "jakubkulhan/node:$NEW_MAJOR_VERSION"
-            docker push "jakubkulhan/node:$NEW_MAJOR_VERSION"
           fi
 
 commands:
