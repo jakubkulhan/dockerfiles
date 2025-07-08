@@ -11,6 +11,7 @@ workflows:
             - "8.0"
             - "8.1"
             - "8.2"
+            - "8.4"
             tag_suffix:
             - ""
             - "-fpm"
@@ -30,6 +31,7 @@ workflows:
             - "8.0"
             - "8.1"
             - "8.2"
+            - "8.4"
             tag_suffix:
             - ""
             - "-fpm"
@@ -47,7 +49,7 @@ jobs:
     steps:
     - checkout
     - setup_remote_docker:
-        version: 20.10.11
+        version: 28.3.1
     - install_docker_buildx
     - docker_login
     - run:
@@ -57,6 +59,7 @@ jobs:
           export VERSION=<< parameters.version >>
           export TAG_SUFFIX=<< parameters.tag_suffix >>
           export DOCKER_BUILDKIT=1
+          sed -i 's|php/8\.0/fpm|php/${VERSION}/fpm|g' php/php-fpm.conf
           if docker pull "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" &> /dev/null; then
             export CURRENT_VERSION=$(docker run --rm --entrypoint=php "jakubkulhan/php:${VERSION}${TAG_SUFFIX}" -r 'echo PHP_VERSION;')
           else
@@ -85,7 +88,7 @@ commands:
         name: Install Docker Buildx
         command: |
           mkdir -p ~/.docker/cli-plugins/
-          wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64
+          wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.25.0/buildx-v0.25.0.linux-amd64
           chmod a+x ~/.docker/cli-plugins/docker-buildx
           docker buildx version
           sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
